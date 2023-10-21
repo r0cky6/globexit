@@ -1,6 +1,6 @@
 DECLARE @emp_id INT;
 SET @emp_id = 710253;
--- s
+
 WITH
 subdivision AS (
     SELECT TOP 1 [collaborators].[subdivision_id] AS "sub_id" FROM [collaborators] WHERE [id] = @emp_id
@@ -10,7 +10,7 @@ distance_to_root AS (
         [parent_id], 
         1 AS "distance" 
     FROM [subdivisions]
-    WHERE id = (SELECT [sub_id] FROM [subdivision])
+    WHERE [id] = (SELECT [sub_id] FROM [subdivision])
     UNION ALL
     SELECT 
         [subdivisions].[parent_id], 
