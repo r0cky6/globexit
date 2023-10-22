@@ -3,13 +3,13 @@ import { EmployeeData } from "../../schema";
 import './SearchBar.scss'
 import searchIcon from "../../assets/search.svg"
 import axios from "axios";
-
+import { BASE_API_URL } from '../../App'
 type SearchBarProps = {
 	setEmployees: React.Dispatch<SetStateAction<EmployeeData[]>>
 }
 export default function SearchBar({ setEmployees }: SearchBarProps): ReactNode {
 	const fetchEmployees = (query: string | null) => {
-		const url = "http://192.168.42.178:3000/" + (query && `?term=${query}` || "")
+		const url = BASE_API_URL + (query && `?term=${query}` || "")
 		axios.get(url)
 			.then((res: { data: EmployeeData[] }) => setEmployees(res.data))
 			.catch(err => { throw new Error(err) })
