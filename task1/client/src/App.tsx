@@ -7,28 +7,23 @@ import EmployeeCard from "./components/EmployeeCard/EmployeeCard.tsx"
 import EmployeeDetailsModal from "./components/EmployeeDetailsModal/EmployeeDetailsModal.tsx"
 import { EmployeeData } from "./schema.ts"
 
+export const BASE_API_URL = import.meta.env.PROD && import.meta.env.VITE_API_URL || 'http://localhost:3000/'
+
 function App() {
 	const [employees, setEmployees] = useState<EmployeeData[]>([])
 	const [modalOpen, setModalOpen] = useState<boolean>(false)
 	const [employeeIndex, setEmployeeIndex] = useState<number>(0)
-	function getBaseApiUrl() {
-
-	}
-	const fetchEmployees = (query: string | null) => {
-		const url = "http://192.168.42.178:3000/" + (query && `?term=${query}` || "")
-		axios.get(url)
-			.then((res: { data: EmployeeData[] }) => setEmployees(res.data))
-			.catch(err => { throw new Error(err) })
-	}
 
 	const showEmployeeDetails = (index: number) => {
-		setEmployeeIndex(index);
-		setModalOpen(true);
+		setEmployeeIndex(index)
+		setModalOpen(true)
 		document.body.style.overflow = 'hidden'
 	}
 
 	useEffect(() => {
-		fetchEmployees(null)
+		axios.get(BASE_API_URL)
+			.then((res: { data: EmployeeData[] }) => setEmployees(res.data))
+			.catch(err => { throw new Error(err) })
 	}, [])
 
 	return (
@@ -53,7 +48,6 @@ function App() {
 								employeeData={el}
 								onClick={() => showEmployeeDetails(i)}
 							/>
-
 						))
 					}
 				</ul>
