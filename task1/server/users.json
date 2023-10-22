@@ -1,5 +1,14 @@
 [
 	{
+		"name": "Евгения Савченко",
+		"phone": "+7(918)078-17-05",
+		"email": "yysavch1@mts.ru",
+		"address": "563-4648 Curabitur Street",
+		"position_name": "Дизайнер",
+		"department": "Трайб автоматизированных систем контактных центров",
+		"hire_date": "15.10.2020"
+	},
+	{
 		"name": "Ferdinand Carney",
 		"phone": "(640) 447-3254",
 		"email": "in@aol.net",
