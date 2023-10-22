@@ -1,0 +1,38 @@
+@import "./globals.scss";
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: $font-primary;
+	color: $text-primary;
+}
+
+.app-container {
+	width: 1120px;
+	margin: 0 auto;
+}
+
+.employeeList{
+	list-style: none;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	column-gap: 25px;
+	row-gap: 24px;
+}
+
+@media screen and (max-width: 1120px) {
+	.app-container{
+		width: 100%;
+		padding: 0 24px;
+	}
+
+	.employeeList {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media screen and (max-width: 720px) {
+	.employeeList {
+		grid-template-columns: 1fr;
+	}
+}
