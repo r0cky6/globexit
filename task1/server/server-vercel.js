@@ -1,5 +1,5 @@
-const readFile = require('fs')
-const resolve = require('path')
+const { readFile } = require('fs')
+const { resolve } = require('path')
 
 module.exports = function appPlugin(fastify, _, done) {
 	fastify.register(require('fastify-cors'));
