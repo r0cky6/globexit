@@ -2,7 +2,7 @@
 
 .employeeCard {
 	background-color: white;
-	box-shadow: 0px 0px 20px 0px hsla(0,0,0,.1);
+	box-shadow: 0px 0px 20px 0px hsla(0,0%,0%,.1);
 	padding: 24px;
 	border-radius: 16px;
 	width: 100%;
@@ -11,7 +11,7 @@
 	transition: box-shadow .3s;
 
 	&:hover {
-		box-shadow: 0px 0px 30px 0px hsla(0,0,0,.2);
+		box-shadow: 0px 0px 30px 0px hsla(0,0%,0%,.2);
 	}
 
 	.employeeCard-name {
