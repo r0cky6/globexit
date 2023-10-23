@@ -1,7 +1,7 @@
-import { readFile } from 'fs';
-import { resolve } from 'path';
+const readFile = require('fs')
+const resolve = require('path')
 
-export default function appPlugin(fastify, _, done) {
+module.exports = function appPlugin(fastify, _, done) {
 	fastify.register(require('fastify-cors'));
 
 	fastify.get('/', async (request, reply) => {
