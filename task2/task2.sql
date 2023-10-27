@@ -4,13 +4,13 @@ SET @emp_id = 710253;
 WITH 
 subdivisions_up as (
     SELECT 
-        [subdivisions].*,
+        [subdivisions].parent_id,
         0 AS depth
     FROM [subdivisions]
     WHERE [subdivisions].[id] = (SELECT [collaborators].[subdivision_id] from [collaborators] WHERE [collaborators].[id] = @emp_id)
     UNION ALL
     SELECT 
-        [subdivisions].*,
+        [subdivisions].parent_id,
         [subdivisions_up].[depth] + 1 AS depth
     from [subdivisions]
     INNER JOIN subdivisions_up ON [subdivisions_up].[parent_id] = [subdivisions].[id]
