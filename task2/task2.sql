@@ -1,70 +1,44 @@
 DECLARE @emp_id INT;
 SET @emp_id = 710253;
 
-WITH
-subdivision AS (
-    SELECT TOP 1 [collaborators].[subdivision_id] AS "sub_id" FROM [collaborators] WHERE [id] = @emp_id
-),
-distance_to_root AS (
+WITH 
+subdivisions_up as (
     SELECT 
-        [parent_id], 
-        1 AS "distance" 
+        [subdivisions].parent_id,
+        0 AS depth
     FROM [subdivisions]
-    WHERE [id] = (SELECT [sub_id] FROM [subdivision])
+    WHERE [subdivisions].[id] = (SELECT [collaborators].[subdivision_id] from [collaborators] WHERE [collaborators].[id] = @emp_id)
     UNION ALL
     SELECT 
-        [subdivisions].[parent_id], 
-        [distance_to_root].[distance] + 1 
-    FROM [distance_to_root]
-    JOIN [subdivisions] 
-    ON [distance_to_root].[parent_id] = [subdivisions].[id]
+        [subdivisions].parent_id,
+        [subdivisions_up].[depth] + 1 AS depth
+    from [subdivisions]
+    INNER JOIN subdivisions_up ON [subdivisions_up].[parent_id] = [subdivisions].[id]
 ),
 subdivisions_down AS (
     SELECT 
-        [subs].[id] AS "sub_id", 
-        [subs].[parent_id], 
-        [subs].[name] AS "sub_name", 
-    (
-        SELECT TOP 1 [distance] + 1
-        FROM [distance_to_root] 
-        ORDER BY [distance] DESC
-    ) AS [sub_level]
-    FROM [subdivisions] [subs]
-    WHERE [subs].[parent_id] = (SELECT [sub_id] FROM [subdivision])
+        [subdivisions].*,
+        (SELECT TOP 1 [subdivisions_up].[depth] FROM [subdivisions_up] ORDER BY [subdivisions_up].[depth] DESC) + 2 AS depth
+    FROM [subdivisions]
+    WHERE [subdivisions].[parent_id] = (SELECT [collaborators].[subdivision_id] from [collaborators] WHERE [collaborators].[id] = @emp_id)
     UNION ALL
     SELECT 
-        [subs].[id], 
-        [subs].[parent_id], 
-        [subs].[name], 
-        [subdivisions_down].[sub_level] + 1 
-    FROM [subdivisions_down]
-    JOIN [subdivisions] [subs]
-    ON [subdivisions_down].[sub_id] = [subs].[parent_id]
-),
-collaborators_count AS (
-    SELECT [collaborators].[id],
-    (
-        SELECT COUNT([collaborators].[id]) 
-        FROM [collaborators] 
-        WHERE [collaborators].[subdivision_id] = [subdivisions_down].[sub_id]
-    ) AS "colls_count"
-    FROM [collaborators] 
-    JOIN [subdivisions_down] 
-    ON [subdivisions_down].[sub_id]= [collaborators].[subdivision_id]
+        [subdivisions].*,
+        [subdivisions_down].[depth] + 1 AS depth
+    from [subdivisions_down]
+    JOIN subdivisions ON [subdivisions].[parent_id] = [subdivisions_down].[id]
 )
-SELECT 
+    SELECT
     [collaborators].[id],
     [collaborators].[name],
-    [subdivisions_down].[sub_id],
-    [subdivisions_down].[sub_name],
-    [subdivisions_down].[sub_level],
-    [collaborators_count].[colls_count]
-FROM [subdivisions_down]
-JOIN [collaborators] 
-ON [collaborators].[subdivision_id] = [subdivisions_down].[sub_id]
-JOIN [collaborators_count] 
-ON [collaborators_count].[id] = [collaborators].[id]
-WHERE [collaborators].[age] < 40
-AND LEN([collaborators].[name]) > 11
-AND [subdivisions_down].[sub_id] NOT IN (100055, 100059)
-ORDER BY [sub_level] ASC;
+    [subdivisions_down].[id] AS "sub_id",
+    [subdivisions_down].[name] AS "sub_name",
+    [subdivisions_down].[depth] AS "sub_level",
+    (SELECT COUNT(*) FROM [collaborators] WHERE [collaborators].[subdivision_id] = [subdivisions_down].[id]) AS 'colls_count'
+    FROM [collaborators]
+    JOIN [subdivisions_down]
+    ON [collaborators].[subdivision_id] = [subdivisions_down].[id]
+    WHERE [collaborators].[age] < 40
+    AND LEN([collaborators].[name]) > 11
+    AND [subdivisions_down].[id] NOT IN (100055, 100059)
+    ORDER BY [sub_level] ASC;
